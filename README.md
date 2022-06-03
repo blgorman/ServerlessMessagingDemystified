@@ -43,12 +43,17 @@ Service bus topics can then be subscribed to from one or more consumers.  Each c
 
 Service Bus Queues are the tool of choice when you need a guaranteed FIFO object at azure to ensure message processing is handled in the order the messages are received.  Once a queue is created, any application with the correct SAS for listening can consume messages from the Queue.  Any application with the SAS for writing can publish messages to the queue.  
 
-- []()
-- []()
-- []()
-- []()
+- [Topics and Subscriptions](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-how-to-use-topics-subscriptions?WT.mc_id=AZ-MVP-5004334)
+- [Getting started with Queues](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues?WT.mc_id=AZ-MVP-5004334)
 - []()
 
 ## Azure Storage Queue
 
 The Azure storage queue is used to read and write messages similar to the service bus queue.  In storage queue, order cannot be guaranteed.  The messages in a storage queue are smaller than the messages in service bus, but storage queue can store millions of messages and they are automatically purged after 7 days.
+
+-[Working with Storage Queues](https://docs.microsoft.com/en-us/azure/storage/queues/storage-dotnet-how-to-use-queues?WT.mc_id=AZ-MVP-5004334&tabs=dotnet)  
+- []()
+
+## Storage Queues vs Service Bus Queues
+
+[When do you use each one?](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-azure-and-service-bus-queues-compared-contrasted?WT.mc_id=AZ-MVP-5004334)  
