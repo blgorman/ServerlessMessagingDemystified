@@ -16,9 +16,6 @@ namespace ServiceBusQueue
             BuildOptions();
             Console.WriteLine("Service Bus Queue Publisher");
 
-            //var configCheck = _configuration["SimpleKey:SimpleValue"];
-            //Console.WriteLine($"Configuration: {configCheck}");
-
             var theMovies = GetMovies();
 
             //add the service bus connection and clients
