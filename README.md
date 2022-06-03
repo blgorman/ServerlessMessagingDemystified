@@ -34,6 +34,7 @@ In some cases you will also choose to write your own custom events.  This is a b
 - [How to filter events with event grid](https://docs.microsoft.com/en-us/azure/event-grid/how-to-filter-events?WT.mc_id=AZ-MVP-5004334)  
 - [Event Grid message delivery and retry](https://docs.microsoft.com/en-us/azure/event-grid/delivery-and-retry?WT.mc_id=AZ-MVP-5004334)  
 - [Dead Letter and Retry Policies](https://docs.microsoft.com/en-us/azure/event-grid/manage-event-delivery?WT.mc_id=AZ-MVP-5004334)  
+- [Quickstart: Custom event handling with Event Grid](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart?WT.mc_id=AZ-MVP-5004334)
 
 ## Service Bus
 
