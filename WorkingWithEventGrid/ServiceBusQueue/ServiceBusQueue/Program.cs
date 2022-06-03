@@ -49,7 +49,7 @@ namespace ServiceBusQueue
                 try
                 {
                     await sender.SendMessagesAsync(messageBatch);
-                    Console.WriteLine($"Batch processed {messageBatch.Count} messages to the queue for manual plate review");
+                    Console.WriteLine($"Batch processed {messageBatch.Count} messages to the queue for movie review list");
                 }
                 catch (Exception ex)
                 {
