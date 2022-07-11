@@ -10,6 +10,9 @@ using Newtonsoft.Json;
 namespace UtilizingStorageQueue
 {
     //https://docs.microsoft.com/en-us/azure/storage/queues/storage-quickstart-queues-dotnet?tabs=environment-variable-windows
+    /// <summary>
+    /// Automatically creates the queue if it doesn't exist.  Also shows adding, processing, and removing messages from the queue
+    /// </summary>
     public class Program
     {
         private static IConfigurationRoot _configuration;
@@ -94,8 +97,17 @@ namespace UtilizingStorageQueue
             Console.ReadLine();
 
             // Clean up
-            Console.WriteLine($"Deleting queue: {_sqClient.Name}");
-            await _sqClient.DeleteAsync();
+            Console.WriteLine("Would you like to delete the queue?");
+            var deleteIt = Console.ReadLine().ToLower().StartsWith('y');
+            if (deleteIt)
+            {
+                Console.WriteLine($"Deleting queue: {_sqClient.Name}");
+                await _sqClient.DeleteAsync();
+            }
+            else
+            {
+                Console.WriteLine("Queue not deleted");
+            }
 
             Console.WriteLine("Done");
         }
