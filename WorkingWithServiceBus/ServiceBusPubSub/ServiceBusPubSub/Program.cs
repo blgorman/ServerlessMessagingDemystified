@@ -31,7 +31,7 @@ namespace ServiceBusPubSub
             BuildOptions();
             Console.WriteLine("Service Bus Pub/Sub producer started");
 
-            _sbConnectionString = _configuration["ServiceBus:WriteOnlyAccessToken"];
+            _sbConnectionString = _configuration["ServiceBus:WriteOnlySASConnectionString"];
             _sbTopicName = _configuration["ServiceBus:TopicName"];
 
             _sbClient = new ServiceBusClient(_sbConnectionString);

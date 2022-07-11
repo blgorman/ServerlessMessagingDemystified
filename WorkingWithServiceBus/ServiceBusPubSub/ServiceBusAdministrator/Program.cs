@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace ServiceBusAdministrator
 {
+    /// <summary>
+    /// Note: This code is idempotent so you can run multiple times without error, even if topics/subscriptions do not or already exist.
+    /// </summary>
     public class Program
     {
         private static IConfigurationRoot _configuration;
@@ -23,7 +26,7 @@ namespace ServiceBusAdministrator
         public static async Task Main(string[] args)
         {
             BuildOptions();
-            _sbConnectionString = _configuration["ServiceBus:NamespaceRootAccessToken"];
+            _sbConnectionString = _configuration["ServiceBus:NamespaceRootAccessConnectionString"];
             _sbTopicName = _configuration["ServiceBus:TopicName"];
             _sbSubscriptionFamilyMovies = _configuration["ServiceBus:SubscriptionNameFamily"];
             _sbSubscriptionAdultMovies = _configuration["ServiceBus:SubscriptionNameAdult"];

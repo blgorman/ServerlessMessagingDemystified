@@ -28,7 +28,7 @@ namespace ServiceBusConsumer
             BuildOptions();
             Console.WriteLine("Service Bus Pub/Sub consumer started");
 
-            _sbConnectionString = _configuration["ServiceBus:ReadOnlySASToken"];
+            _sbConnectionString = _configuration["ServiceBus:ReadOnlySASConnectionString"];
             _sbTopicName = _configuration["ServiceBus:TopicName"];
             _sbSubscriptionFamilyMovies = _configuration["ServiceBus:SubscriptionNameFamily"];
             _sbSubscriptionAdultMovies = _configuration["ServiceBus:SubscriptionNameAdult"];
