@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>59e05436-21e0-441b-8156-0309e94fbee3</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,7 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0-*" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0-*" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0-*" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
