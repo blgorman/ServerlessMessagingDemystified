@@ -24,7 +24,7 @@ namespace UtilizingStorageQueue
         public static async Task Main(string[] args)
         {
             BuildOptions();
-            Console.WriteLine("Hello World");
+            Console.WriteLine("Hello Storage Queue");
 
             _sqConnectionString = _configuration["StorageAccount:ConnectionString"];
             _sqName = _configuration["StorageAccount:QueueName"];
@@ -51,20 +51,30 @@ namespace UtilizingStorageQueue
             Console.WriteLine("\nPeek at the messages in the queue...");
 
             // Peek at messages in the queue
-            PeekedMessage[] peekedMessages = await _sqClient.PeekMessagesAsync(maxMessages: 3);
+            PeekedMessage[] peekedMessages = await _sqClient.PeekMessagesAsync(maxMessages: 10);
 
             foreach (PeekedMessage peekedMessage in peekedMessages)
             {
                 // Display the message
-                Console.WriteLine($"Message: {peekedMessage.MessageText}");
+                Console.WriteLine($"MessageId: {peekedMessage.MessageId} | Message: {peekedMessage.MessageText}");
             }
 
             //update
             Console.WriteLine("\nUpdating the first message in the queue...");
 
             // Update a message using the saved receipt from sending the message
-            var newMovie = new Movie() { Id = "235234QAW", MPAARating = "PG-13", Title = "Top Gun: Maverick", ReleaseYear = 2022 };
-            await _sqClient.UpdateMessageAsync(receipts[0].MessageId, receipts[0].PopReceipt, JsonConvert.SerializeObject(newMovie));
+            var newMovie = new Movie()
+            {
+                Id = "235234QAW",
+                MPAARating = "PG-13"
+                                        ,
+                Title = "Top Gun: Maverick",
+                ReleaseYear = 2022
+            };
+            await _sqClient.UpdateMessageAsync(receipts[0].MessageId
+                                                , receipts[0].PopReceipt
+                                                , JsonConvert.SerializeObject(newMovie));
+
 
             //receive [but leave]
             Console.WriteLine("\nReceiving messages from the queue...");
@@ -82,15 +92,39 @@ namespace UtilizingStorageQueue
             Console.WriteLine("\nPress Enter key to 'process' messages and delete them from the queue...");
             Console.ReadLine();
 
+            //lease extension[do not do this if you are going to delete messages]
+            Console.WriteLine("Would you like to lease the mesages for one hour?");
+            var leaseMessages = Console.ReadLine().ToLower().StartsWith('y');
+            if (leaseMessages)
+            {
+                TimeSpan ts = new TimeSpan(1);
+                foreach (QueueMessage message in messages.Value)
+                {
+                    Console.WriteLine($"Renewing Lease for 1 hour on {message.MessageId}");
+                    await _sqClient.UpdateMessageAsync(message.MessageId
+                                                        , message.PopReceipt
+                                                        , message.Body, ts);
+                }
+
+                foreach (QueueMessage message in messages.Value)
+                {
+                    Console.WriteLine($"Message: {message.MessageId} " +
+                                        $"Next visible on: {message.NextVisibleOn}");
+                }
+            }
+
+
             // Process and delete messages from the queue
             foreach (QueueMessage message in messages.Value)
             {
                 // "Process" the message
-                Console.WriteLine($"Message: {message.MessageText}");
+                Console.WriteLine($"Message: {message.MessageText} processed" +
+                                        $", now deleting...");
 
                 // Let the service know we're finished with
                 // the message and it can be safely deleted.
-                await _sqClient.DeleteMessageAsync(message.MessageId, message.PopReceipt);
+                await _sqClient.DeleteMessageAsync(message.MessageId
+                                                    , message.PopReceipt);
             }
 
             Console.WriteLine("\nPress Enter key to delete the queue...");
