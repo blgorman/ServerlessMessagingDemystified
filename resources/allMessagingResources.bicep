@@ -15,9 +15,16 @@ param coolStorageBlobContainerName string = 'serverlesscoolpath'
 @description('Specifies a project name that is used to generate the Event Hub name and the Namespace name.')
 param eventHubProjectName string = 'myorglogging'
 
+@description('Name of the SErvice Bus Queue')
+param serviceBusQueueName string = 'FileProcessingQueue'
+
+@description('Name of the Topic')
+param serviceBusTopicName string = 'MoviesToReview'
+
 module deployStorage 'storage.bicep' = {
   name: 'deployStorage'
   params: {
+    location: location
     storageName: storageName
     captureEventsBlobContainerName: captureEventsBlobContainerName
     coolStorageBlobContainerName: coolStorageBlobContainerName
@@ -36,5 +43,15 @@ module deployEventHub 'eventHub.bicep' = {
     captureBlobContainerName: captureBlobContainerName
     storageName: storageAccountName
     eventHubSku: 'Standard'
+  }
+}
+
+module deployServiceBus 'serviceBus.bicep' = {
+  name: 'deployServiceBus'
+  params: {
+    location: location
+    projectName: eventHubProjectName
+    serviceBusQueueName: serviceBusQueueName
+    serviceBusTopicName: serviceBusTopicName
   }
 }
