@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Azure;
 using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
-using System;
-using System.Threading.Tasks;
 using MySolutionObjectModels;
 using Newtonsoft.Json;
 
@@ -20,6 +17,9 @@ namespace UtilizingStorageQueue
         private static string _sqConnectionString;
         private static string _sqName;
         private static QueueClient _sqClient;
+        private static int LEASE_TIME_SECONDS = 60;
+        private static int MAX_PEEK_MESSAGES = 10;
+        private static int MAX_RECEIVE_MESSAGES = 20;
 
         public static async Task Main(string[] args)
         {
@@ -39,22 +39,30 @@ namespace UtilizingStorageQueue
                 await _sqClient.CreateAsync();
             }
             
-            Console.WriteLine("\nAdding messages to the queue...");
-
-            // Send several messages to the queue
-            var movies = GetMovies();
+            Console.WriteLine("Would you like to add messages to the queue?");
+            var addMessages = Console.ReadLine().ToLower().StartsWith('y');
             var receipts = new List<SendReceipt>();
-
-            foreach (var movie in movies)
+            if (addMessages)
             {
-                receipts.Add(await _sqClient.SendMessageAsync(JsonConvert.SerializeObject(movie)));
+                //add
+                Console.WriteLine("\nAdding messages to the queue...");
+
+                // Send several messages to the queue
+                var movies = GetMovies();
+                
+
+                foreach (var movie in movies)
+                {
+                    receipts.Add(await _sqClient.SendMessageAsync(JsonConvert.SerializeObject(movie)));
+                }
             }
+            
 
             //peek
             Console.WriteLine("\nPeek at the messages in the queue...");
 
             // Peek at messages in the queue
-            PeekedMessage[] peekedMessages = await _sqClient.PeekMessagesAsync(maxMessages: 10);
+            PeekedMessage[] peekedMessages = await _sqClient.PeekMessagesAsync(maxMessages: MAX_PEEK_MESSAGES);
 
             foreach (PeekedMessage peekedMessage in peekedMessages)
             {
@@ -62,28 +70,28 @@ namespace UtilizingStorageQueue
                 Console.WriteLine($"MessageId: {peekedMessage.MessageId} | Message: {peekedMessage.MessageText}");
             }
 
-            //update
-            Console.WriteLine("\nUpdating the first message in the queue...");
+            if (addMessages && receipts.Count > 0)
+            {   //update
+                Console.WriteLine("\nUpdating the first message in the queue...");
 
-            // Update a message using the saved receipt from sending the message
-            var newMovie = new Movie()
-            {
-                Id = "235234QAW",
-                MPAARating = "PG-13"
-                                        ,
-                Title = "Top Gun: Maverick",
-                ReleaseYear = 2022
-            };
-            await _sqClient.UpdateMessageAsync(receipts[0].MessageId
+                var newMovie = new Movie()
+                {
+                    Id = "235234QAW",
+                    MPAARating = "PG-13",
+                    Title = "Top Gun: Maverick",
+                    ReleaseYear = 2022
+                };
+                // Update a message using the saved receipt from sending the message
+                await _sqClient.UpdateMessageAsync(receipts[0].MessageId
                                                 , receipts[0].PopReceipt
                                                 , JsonConvert.SerializeObject(newMovie));
-
-
+            }
+            
             //receive [but leave]
             Console.WriteLine("\nReceiving messages from the queue...");
 
             // Get messages from the queue
-            var messages = await _sqClient.ReceiveMessagesAsync(maxMessages: 20);
+            var messages = await _sqClient.ReceiveMessagesAsync(maxMessages: MAX_RECEIVE_MESSAGES);
 
             foreach (var m in messages.Value)
             {
@@ -96,17 +104,18 @@ namespace UtilizingStorageQueue
             Console.ReadLine();
 
             //lease extension[do not do this if you are going to delete messages]
-            Console.WriteLine("Would you like to lease the mesages for one hour?");
+            Console.WriteLine("Would you like to lease the mesages for one minute (warning: Doing this will lock the messages until after the lease expires)?");
+            var leaseTime = TimeSpan.FromSeconds(LEASE_TIME_SECONDS);
+
             var leaseMessages = Console.ReadLine().ToLower().StartsWith('y');
             if (leaseMessages)
             {
-                TimeSpan ts = new TimeSpan(1);
                 foreach (QueueMessage message in messages.Value)
                 {
-                    Console.WriteLine($"Renewing Lease for 1 hour on {message.MessageId}");
+                    Console.WriteLine($"Renewing Lease for 1 minute on {message.MessageId}");
                     await _sqClient.UpdateMessageAsync(message.MessageId
                                                         , message.PopReceipt
-                                                        , message.Body, ts);
+                                                        , message.Body, leaseTime);
                 }
 
                 foreach (QueueMessage message in messages.Value)
@@ -115,7 +124,6 @@ namespace UtilizingStorageQueue
                                         $"Next visible on: {message.NextVisibleOn}");
                 }
             }
-
 
             // Process and delete messages from the queue
             foreach (QueueMessage message in messages.Value)
@@ -126,12 +134,25 @@ namespace UtilizingStorageQueue
 
                 // Let the service know we're finished with
                 // the message and it can be safely deleted.
-                await _sqClient.DeleteMessageAsync(message.MessageId
+                try
+                {
+                    await _sqClient.DeleteMessageAsync(message.MessageId
                                                     , message.PopReceipt);
+                }
+                catch (Exception ex) 
+                {
+                    if (ex.Message.Contains("The specified message does not exist."))
+                    {
+                        Console.WriteLine("Message could not be deleted because it is leased and locked from modification");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{ex.Message}");
+                    }
+                }
+                
             }
-
-            Console.WriteLine("\nPress Enter key to delete the queue...");
-            Console.ReadLine();
+            Console.WriteLine("All Messages Processed");
 
             // Clean up
             Console.WriteLine("Would you like to delete the queue?");

@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>$(TargetFrameworkVersion)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UserSecretsId>f23027e1-f802-42ba-af72-5dac2d8cfb04</UserSecretsId>
+    <UserSecretsId>9803a6a4-0cdc-4991-9d8a-258a9a0c133d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,12 +19,12 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Storage.Queues" Version="12.10.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0-*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0-*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Azure.Storage.Queues" Version="$(AzureStorageQueuesVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="$(MicrosoftExtensionsConfigurationUserSecretsVersion)" />
+		<PackageReference Include="Newtonsoft.Json" Version="$(NewtonSoftJsonVersion)" />
 	</ItemGroup>
 
 	<ItemGroup>
