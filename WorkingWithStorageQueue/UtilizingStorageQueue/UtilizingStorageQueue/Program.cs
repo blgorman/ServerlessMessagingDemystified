@@ -34,8 +34,11 @@ namespace UtilizingStorageQueue
             _sqClient = new QueueClient(_sqConnectionString, _sqName);
 
             // Create the queue
-            await _sqClient.CreateAsync();
-
+            if (!await _sqClient.ExistsAsync())
+            {
+                await _sqClient.CreateAsync();
+            }
+            
             Console.WriteLine("\nAdding messages to the queue...");
 
             // Send several messages to the queue
