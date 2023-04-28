@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>$(TargetFrameworkVersion)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UserSecretsId>59e05436-21e0-441b-8156-0309e94fbee3</UserSecretsId>
+    <UserSecretsId>f607cd41-4b6e-4f11-8961-414e0e324983</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,12 +19,12 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.8.1" />
-		<PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.2.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0-*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0-*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0-*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+		<PackageReference Include="Azure.Messaging.ServiceBus" Version="$(AzureMessagingServiceBusVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="$(MicrosoftExtensionsConfigurationUserSecretsVersion)" />
+		<PackageReference Include="Newtonsoft.Json" Version="$(NewtonSoftJsonVersion)" />
 	</ItemGroup>
 
 	<ItemGroup>
