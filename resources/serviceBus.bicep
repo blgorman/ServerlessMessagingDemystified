@@ -84,7 +84,5 @@ resource serviceBusTopicResource 'Microsoft.ServiceBus/namespaces/topics@2017-04
 //   parent: serviceBusTopicAllMoviesSubscriptionResource
 //   name: serviceBusRuleAllMovies
 //   properties: {
-    
-    
 //   }
 // }
