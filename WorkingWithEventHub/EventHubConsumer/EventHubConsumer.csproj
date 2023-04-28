@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UserSecretsId>0c81563f-ad33-4d55-abc6-930568466f85</UserSecretsId>
+    <UserSecretsId>76be61c5-846f-4ee4-b450-5049ce255b45</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,12 +19,12 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Messaging.EventHubs" Version="5.7.0" />
-		<PackageReference Include="Azure.Messaging.EventHubs.Processor" Version="5.7.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0-*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0-*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0-*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+		<PackageReference Include="Azure.Messaging.EventHubs" Version="$(AzureMessagingEventHubsVersion)" />
+		<PackageReference Include="Azure.Messaging.EventHubs.Processor" Version="$(AzureMessagingEventHubsProcessorVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="$(MicrosoftExtensionsConfigurationUserSecretsVersion)" />
 	</ItemGroup>
 
 </Project>
