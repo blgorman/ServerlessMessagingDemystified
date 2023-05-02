@@ -34,6 +34,43 @@ namespace ServiceBusConsumer
             _sbSubscriptionAdultMovies = _configuration["ServiceBus:SubscriptionNameAdult"];
             _sbSubscriptionAllMovies = _configuration["ServiceBus:SubscriptionAll"];
 
+            //TODO: add guard clauses to check for null or empty values on config values.
+
+            bool shouldContinue = false;
+            do 
+            {
+                PrintMenu();
+
+                bool success = int.TryParse(Console.ReadLine(), out int choice);
+
+                while (!success || choice < 1 || choice > 3)
+                {
+                    Console.WriteLine("You made a bad choice. Try again");
+                    PrintMenu();
+                    success = int.TryParse(Console.ReadLine(), out choice);
+                }
+
+                var subChoice = GetSubscriptionChoice(choice);
+                if (string.IsNullOrWhiteSpace(subChoice))
+                { 
+                    shouldContinue = true;
+                    continue;
+                }
+
+                _sbClient = new ServiceBusClient(_sbConnectionString);
+                _sbReceiver = _sbClient.CreateReceiver(_sbTopicName, subChoice, new ServiceBusReceiverOptions() { ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete });
+                await ReceiveAllMessageFromSubscription();
+
+                Console.WriteLine("Do you want to continue [y/n]?");
+                shouldContinue = Console.ReadLine()?.ToLower().StartsWith('y') ?? false;
+
+            } while (shouldContinue);
+
+            Console.WriteLine("Program completed");
+        }
+
+        private static async Task PrintMenu()
+        {
             Console.WriteLine(new string('*', 80));
             Console.WriteLine("Which type of movies do you want to review? ");
             Console.WriteLine(new string('*', 80));
@@ -41,48 +78,42 @@ namespace ServiceBusConsumer
             Console.WriteLine("* 2 - Family movies");
             Console.WriteLine("* 3 - Adult movies");
             Console.WriteLine(new string('*', 80));
-            bool success = false;
-            int choice = 1;
-            success = int.TryParse(Console.ReadLine(), out choice);
-            var subChoice = _sbSubscriptionAllMovies;
-            if (success)
-            {
-                switch (choice)
-                {
-                    case 1:
-                        Console.WriteLine("You have chosen all movies");
-                        subChoice = _sbSubscriptionAllMovies;
-                        break;
-                    case 2:
-                        Console.WriteLine("You have chosen the family movies");
-                        subChoice = _sbSubscriptionFamilyMovies;
-                        break;
-                    case 3:
-                        Console.WriteLine("You have chosen the adult movies");
-                        subChoice = _sbSubscriptionAdultMovies;
-                        break;
-                    default:
-                        Console.WriteLine("You made a bad choice.  All movies selected by default");
-                        break;
-                }
-            }
-
-            _sbClient = new ServiceBusClient(_sbConnectionString);
-            _sbReceiver = _sbClient.CreateReceiver(_sbTopicName, subChoice, new ServiceBusReceiverOptions() { ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete });
-            await ReceiveAllMessageFromSubscription(_sbReceiver);  
-
-            Console.WriteLine("Program completed");
         }
 
-        private static async Task ReceiveAllMessageFromSubscription(ServiceBusReceiver receiver)
+        private static string GetSubscriptionChoice(int choice)
         {
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine("You have chosen all movies");
+                    return _sbSubscriptionAllMovies;
+                case 2:
+                    Console.WriteLine("You have chosen the family movies");
+                    return _sbSubscriptionFamilyMovies;
+                case 3:
+                    Console.WriteLine("You have chosen the adult movies");
+                    return _sbSubscriptionAdultMovies;
+                default:
+                    Console.WriteLine("You made a bad choice. All movies selected by default");
+                    return _sbSubscriptionAllMovies;
+            }
+        }
+
+        private static async Task ReceiveAllMessageFromSubscription()
+        {
+            if (_sbReceiver == null)
+            {
+                Console.WriteLine("Receiver is not initialized correctly.");
+                return;
+            }   
+
             var receivedMessages = 0;
 
             Console.WriteLine("Receiving all messages from your chosen subscription");
 
             while (true)
             {
-                var receivedMessage = await receiver.ReceiveMessageAsync(TimeSpan.FromSeconds(10));
+                var receivedMessage = await _sbReceiver.ReceiveMessageAsync(TimeSpan.FromSeconds(10));
                 if (receivedMessage != null)
                 {
                     foreach (var prop in receivedMessage.ApplicationProperties)

@@ -1,5 +1,4 @@
 ﻿using Azure.Messaging.ServiceBus;
-using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.Extensions.Configuration;
 using MySolutionObjectModels;
 using Newtonsoft.Json;
@@ -34,10 +33,17 @@ namespace ServiceBusPubSub
             _sbConnectionString = _configuration["ServiceBus:WriteOnlySASConnectionString"];
             _sbTopicName = _configuration["ServiceBus:TopicName"];
 
-            _sbClient = new ServiceBusClient(_sbConnectionString);
-            _sbSender = _sbClient.CreateSender(_sbTopicName);
+            if (string.IsNullOrWhiteSpace(_sbConnectionString))
+                throw new ArgumentException("Connection string settings are not initialized correctly");
+            if (string.IsNullOrWhiteSpace(_sbTopicName))
+                throw new ArgumentException("Topic name settings are not initialized correctly");
 
-            await SendMessagesToTopicAsync(_sbSender);
+            _sbClient = new ServiceBusClient(_sbConnectionString);
+            if (_sbClient is null) throw new ArgumentException("Client could not be created, check connection string settings for accuracy");
+
+            _sbSender = _sbClient.CreateSender(_sbTopicName);
+            if (_sbSender is null) throw new ArgumentException("Sender could not be created, check topic name settings for accuracy/existence");
+            await SendMessagesToTopicAsync();
 
             Console.WriteLine("All movies added to the topic");
             Console.WriteLine("Press any key to end the application");
@@ -49,15 +55,20 @@ namespace ServiceBusPubSub
             _configuration = ConfigurationBuilderSingleton.ConfigurationRoot;
         }
 
-        private static async Task SendMessagesToTopicAsync(ServiceBusSender sender)
+        private static async Task SendMessagesToTopicAsync()
         {
+            if (_sbSender is null) 
+            {
+                Console.WriteLine("Sender is not initialized correctly.");
+                return;
+            }
             
             Console.WriteLine("Sending all movies to the topic...");
 
             var movies = GetMovies();
 
             //Send each movie
-            movies.ForEach(async x => await SendMovie(sender, x));
+            movies.ForEach(async x => await SendMovie(_sbSender, x));
 
             Console.WriteLine("All messages sent.");
         }
