@@ -24,6 +24,8 @@ namespace ServiceBusQueue
             var client = new ServiceBusClient(sbConnectionString);
             var sender = client.CreateSender(sbQueueName);
 
+            //TODO: add guard clauses to validate the connection string and queue name
+
             // create a batch
             using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
             {
