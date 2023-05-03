@@ -49,7 +49,11 @@ namespace ServiceBusQueueConsumer
         {
             var client = new ServiceBusClient(_sbConnectionString);
             var options = new ServiceBusReceiverOptions();
-            options.PrefetchCount = 1;
+            //don't do this - used to show how the prefetch can lose a message!
+            //options.PrefetchCount = 1;
+            //make sure that you set the prefetch count to 0, otherwise you will get multiple messages
+            //and process too many and messages will be lost
+            options.PrefetchCount = 0;
 
             //at-most-once-delivery
             options.ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete;

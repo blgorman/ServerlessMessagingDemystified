@@ -3,9 +3,16 @@ param location string = resourceGroup().location
 
 @minLength(3)
 @maxLength(16)
-@description('Provide a unique name for the storage account. Use only lower case letters and numbers, at least 3 and less than 17 chars')
+@description('Provide a unique name for the event hub storage account. Use only lower case letters and numbers, at least 3 and less than 17 chars')
 param storageName string = 'messagingstorage'
 var storageAccountName = substring('${storageName}${uniqueString(resourceGroup().id)}', 0, 24)
+
+@minLength(3)
+@maxLength(16)
+@description('Provide a unique name for the event grid storage account. Use only lower case letters and numbers, at least 3 and less than 17 chars')
+param storageNameEvents string = 'eventstorage'
+var storageAccountNameEvents = substring('${storageNameEvents}${uniqueString(resourceGroup().id)}', 0, 24)
+
 
 @description('Storage account sku')
 @allowed([
@@ -56,6 +63,9 @@ param enableHierarchicalNamespace bool = true
 
 @description('Enable Immutability Policy')
 param enableImmutabilityPolicy bool = false
+
+@description('Event Grid storage account container name')
+param eventTriggerContainerName string = 'uploads'
 
 @description('The storage account.  Toggle the public access to true if you want public blobs on the account in any containers')
 resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
@@ -159,5 +169,57 @@ resource coolStorageContainer 'Microsoft.Storage/storageAccounts/blobServices/co
 //   }
 // }
 
+@description('The storage account.  Toggle the public access to true if you want public blobs on the account in any containers')
+resource storageaccount2 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+  name: storageAccountNameEvents
+  location: location
+  kind: 'StorageV2'
+  sku: {
+    name: storageSku
+  }
+  properties: {
+    allowBlobPublicAccess: allowBlobPublicAccess
+    accessTier: storageTier
+    allowSharedKeyAccess: allowSharedKeyAccess
+    isHnsEnabled: enableHierarchicalNamespace
+    immutabilityPolicy: {
+      enabled: enableImmutabilityPolicy
+    }
+    encryption: {
+      keySource: 'Microsoft.Storage'
+      services: {
+        blob: {
+          enabled: blobEncryptionEnabled
+        }
+        file: {
+          enabled: fileEncryptionEnabled
+        }
+      }
+    }
+  }
+}
+
+resource blobServicesEvents 'Microsoft.Storage/storageAccounts/blobServices@2021-04-01' = {
+  parent: storageaccount2
+  name: 'default'
+  properties: {
+    deleteRetentionPolicy: {
+      enabled: enableBlobRetention
+      days: blobRetentionDays
+    }
+  }
+}
+
+// Create the cool storage container
+resource eventTriggerContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
+  name: eventTriggerContainerName
+  parent: blobServicesEvents
+  properties: {
+    metadata: {}
+    publicAccess: 'None'
+  }
+}
+
 output storageAccountFullName string = storageAccountName
 output captureBlobEventsContainerName string = captureEventsBlobContainerName
+output storageAccountEventsFullname string = storageAccountNameEvents
