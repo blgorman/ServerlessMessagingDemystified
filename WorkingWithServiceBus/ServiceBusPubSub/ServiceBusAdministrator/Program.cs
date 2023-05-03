@@ -1,5 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace ServiceBusAdministrator
 {
@@ -71,7 +72,7 @@ namespace ServiceBusAdministrator
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Debug.WriteLine(e.ToString());
             }
             Console.WriteLine("Topic and subscriptions exist as required");  
         }
@@ -101,7 +102,7 @@ namespace ServiceBusAdministrator
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Could not find existing topic {topicName}{System.Environment.NewLine}{ex.Message}");
+                Debug.WriteLine($"Could not find existing topic {topicName}{System.Environment.NewLine}{ex.Message}");
             }
             return topicExists;
         }
@@ -133,7 +134,7 @@ namespace ServiceBusAdministrator
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error checking for existing subscription {subscription}{System.Environment.NewLine}{ex.Message}");
+                Debug.WriteLine($"Error checking for existing subscription {subscription}{System.Environment.NewLine}{ex.Message}");
             }
             return subscriptionExists;
         }
