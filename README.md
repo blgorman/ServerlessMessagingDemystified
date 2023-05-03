@@ -6,6 +6,10 @@ When you first start working with Azure serverless solutions, it can be tricky t
 
 Hopefully, this talk will help to clear these things up, as well as which solution to use for messaging and queuing in various scenarios.
 
+## Slides
+
+The slides contain *.gif files to demonstrate the concepts which makes the slides too big for non-LFS GitHub. [You can download the slides here](https://talkimages.blob.core.windows.net/messagingdemystified/ServerlessMessagingDemystified.pptx)
+
 ## Event Hub
 
 The Azure Event Hub is your choice for Big Data stream ingestion into Azure.  Along with Event Hub, you have the IoT Hub, which is a subset of the Event Hub. If you have a stream of data coming in at hundreds or thousands of records per second, the Event Hub is your stream ingestion tool of choice.
