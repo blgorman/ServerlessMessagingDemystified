@@ -1,3 +1,7 @@
+# NOTE: This repository is now archived
+
+Everything changes even though a lot stays the same.  This talk and information is now updated for 2024 and can be found [in this repo](https://training.majorguidancesolutions.com/courses/blog-posts-and-talks/contents/6664a6e3863a0) with the [slides and information found here](https://github.com/blgorman/AzureQueuingMessagingAndEvents)
+
 # Serverless Solutions for messaging and handling events at Azure
 
 In this repo you'll find the code and references for my talk on Serverless Messaging Solutions demystified.
